@@ -28,30 +28,26 @@ bool ImportData( const string& iFileName,
 	string line;
 	
 	//Leggo S somma totale investita.
-	while ( !file.eof() ) {
-		getline(file, line);
-		// Salto eventuali righe di commento (che iniziano con il char #).
-		if ( line[0] != '#' )
-				break; 
-	}
+	getline(file, line);
 	stringstream convertS(line);
 	string tmp; //Creo una stringa temporanea che userò per memorizzare stringhe che non mi interessano.
 	getline(convertS, tmp, ';'); //Leggo e "scarto" 'S;'
 	convertS >> S;
 	
-	//Leggo n numero di asset.
-	while ( !file.eof() ) {
-		getline(file, line);
-		// Salto eventuali righe di commento.
-		if ( line[0] != '#' )
-				break; 
+	//Possibile chack su S (se non sto investendo non ha senso procedere).
+	if (S <= 0) {
+		cerr << "Not valid value for S. Invested sum must be a positive number." << endl;
+		return false;
 	}
+	
+	//Leggo n numero di asset.
+	getline(file, line);
 	stringstream convertN(line);
 	getline(convertN, tmp, ';'); //Leggo e "scarto" 'n;'
 	convertN >> n;
 	
 	
-	//Possibile chack su n (se non sto  investendo non ha senso procedere).
+	//Possibile chack su n (se non sto investendo non ha senso procedere).
 	if (n == 0) {
 		cerr << "n is 0. We are not currently investing in any assets." << endl;
 		return false;
@@ -64,7 +60,7 @@ bool ImportData( const string& iFileName,
 	e il vettore r contente i tassi di ritorno degli asset.*/
 	w = new double[n];
 	r = new double[n];
-	for ( size_t i = 0; i < n && !file.eof(); i++ ) {
+	for ( size_t i = 0; i <= n-1 && !file.eof(); i++ ) {
 		getline(file, line);
 		stringstream convertWR(line);
 		convertWR >> w[i];
